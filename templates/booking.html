@@ -1,37 +1,23 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Услуги</title>
+    <title>Booking</title>
 </head>
 <body>
-    <form method="post">
-        <label for="master_id">Мастер</label>
-        {{if .Masters}}
-            <select name="master_id" id="master_id">
-                {{range .Masters}}
-                    <option value="{{.ID}}">{{.Name}}</option>
-                {{end}}
-            </select>
-        {{else}}
-            <p>Нет доступных мастеров</p>
+    <h1>Booking Page</h1>
+    <p>Service ID: {{.ServiceID}}</p>
+    <h2>Available Masters:</h2>
+    <ul>
+        {{range .Masters}}
+        <li>{{.Name}}</li>
         {{end}}
-
-        <label for="slot_id">Время</label>
-        {{if .Slots}}
-            <select name="slot_id" id="slot_id">
-                {{range .Slots}}
-                    <option value="{{.ID}}">{{.Time}}</option>
-                {{end}}
-            </select>
-        {{else}}
-            <p>Нет доступных слотов</p>
+    </ul>
+    <h2>Available Slots:</h2>
+    <ul>
+        {{range .Slots}}
+        <li>{{.Time}}</li>
         {{end}}
-
-        <input type="text" name="customer_name" placeholder="Имя">
-        <input type="text" name="customer_phone" placeholder="Телефон">
-
-        <button type="submit">Забронировать услугу</button>
-    </form>
+    </ul>
 </body>
 </html>

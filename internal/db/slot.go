@@ -1,4 +1,3 @@
-// internal/db/slot.go
 package db
 
 import (
@@ -16,12 +15,11 @@ type Slot struct {
 // Функция для получения доступных слотов для услуги
 func GetAvailableSlots(serviceID int) ([]Slot, error) {
     query := `
-        SELECT s.id, s.time, s.is_available
-        FROM schedules s
-        JOIN services sv ON sv.id = s.service_id
-        WHERE sv.id = $1 AND s.is_available = TRUE
-        ORDER BY s.time
+        SELECT id, time, is_available
+        FROM schedules
+        WHERE is_available = TRUE AND service_id = $1 AND date >= CURRENT_DATE
     `
+    
     rows, err := DB.Query(query, serviceID)
     if err != nil {
         return nil, fmt.Errorf("failed to get slots: %v", err)

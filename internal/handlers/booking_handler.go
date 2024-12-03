@@ -1,12 +1,14 @@
 package handlers
 
 import (
-    "beauty-salon/internal/db"
-    "fmt"
-    "html/template"
-    "net/http"
-    "strconv"
-    "github.com/gorilla/mux"
+	"beauty-salon/internal/db"
+	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type BookingData struct {
@@ -36,12 +38,18 @@ func BookServiceHandler(w http.ResponseWriter, r *http.Request) {
         http.Error(w, fmt.Sprintf("Error fetching masters: %v", err), http.StatusInternalServerError)
         return
     }
+    
+    // Логируем полученных мастеров
+    log.Printf("Masters: %+v", masters)
 
     slots, err := db.GetAvailableSlotsForService(serviceIDInt)
     if err != nil {
         http.Error(w, fmt.Sprintf("Error fetching slots: %v", err), http.StatusInternalServerError)
         return
     }
+
+    // Логируем доступные слоты
+    log.Printf("Slots: %+v", slots)
 
     if r.Method == http.MethodPost {
         // Извлекаем данные из формы
@@ -79,12 +87,13 @@ func BookServiceHandler(w http.ResponseWriter, r *http.Request) {
         Slots:     slots,
     }
 
-    // Загружаем и обрабатываем шаблон
     tmpl, err := template.New("booking").ParseFiles("templates/booking.html")
     if err != nil {
-        http.Error(w, fmt.Sprintf("Error loading template: %v", err), http.StatusInternalServerError)
+        log.Printf("Error loading template: %v", err)
+        http.Error(w, "Internal Server Error: Template not found or invalid", http.StatusInternalServerError)
         return
     }
+
 
     // Рендерим шаблон с данными
     err = tmpl.Execute(w, data)
