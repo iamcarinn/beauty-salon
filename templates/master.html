@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор мастера</title>
+</head>
+<body>
+    <h1>Выберите мастера</h1>
+    <form action="/book_service" method="POST">
+        <input type="hidden" name="slot_id" value="{{.SlotID}}">
+        <select name="master_id">
+            {{range .Masters}}
+                <option value="{{.ID}}">{{.Name}}</option>
+            {{end}}
+        </select>
+        <button type="submit">Забронировать</button>
+    </form>
+</body>
+</html>

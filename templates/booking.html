@@ -2,18 +2,36 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Запись на услугу</title>
+    <title>Услуги</title>
 </head>
 <body>
-    <h1>Записаться на услугу</h1>
-    <form action="/booking/{{.ServiceID}}" method="POST">
-        <label for="customer_name">Имя:</label>
-        <input type="text" id="customer_name" name="customer_name" required><br><br>
+    <form method="post">
+        <label for="master_id">Мастер</label>
+        {{if .Masters}}
+            <select name="master_id" id="master_id">
+                {{range .Masters}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+            </select>
+        {{else}}
+            <p>Нет доступных мастеров</p>
+        {{end}}
 
-        <label for="customer_phone">Телефон:</label>
-        <input type="text" id="customer_phone" name="customer_phone" required><br><br>
+        <label for="slot_id">Время</label>
+        {{if .Slots}}
+            <select name="slot_id" id="slot_id">
+                {{range .Slots}}
+                    <option value="{{.ID}}">{{.Time}}</option>
+                {{end}}
+            </select>
+        {{else}}
+            <p>Нет доступных слотов</p>
+        {{end}}
 
-        <button type="submit">Записаться</button>
+        <input type="text" name="customer_name" placeholder="Имя">
+        <input type="text" name="customer_phone" placeholder="Телефон">
+
+        <button type="submit">Забронировать услугу</button>
     </form>
 </body>
 </html>

@@ -8,24 +8,25 @@ import (
     "net/http"
     "log"
     "strconv"
-    "os"
+    //"os"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-    cwd, err := os.Getwd()  // Получаем текущую рабочую директорию
-    if err != nil {
-        http.Error(w, "Failed to get current working directory", http.StatusInternalServerError)
-        return
-    }
-    log.Println("Current working directory:", cwd)  // Выводим в лог текущую рабочую директорию
-
     tmpl, err := template.ParseFiles("templates/home.html")
     if err != nil {
+        log.Println("Error loading template:", err)
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
-    tmpl.Execute(w, nil)
+
+    err = tmpl.Execute(w, nil)
+    if err != nil {
+        log.Println("Error executing template:", err)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
 }
+
 
 
 func CategoryHandler(w http.ResponseWriter, r *http.Request) {
