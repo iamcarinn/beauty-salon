@@ -1,15 +1,45 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Доступные слоты</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Slots for Booking</title>
 </head>
 <body>
-    <h1>Доступные слоты</h1>
-    <ul>
-        {{range .Slots}}
-            <li>Мастер ID: {{.MasterID}}, Дата: {{.Date}}, Время: {{.Time}}</li>
-        {{end}}
-    </ul>
+    <h1>Available Slots for Booking</h1>
+    <form method="POST" action="/book-slot">
+        <label for="master">Select Master:</label>
+        <select name="master" id="master">
+            {{range .MasterSlots}}
+                <option value="{{.Master.ID}}">{{.Master.Name}}</option>
+            {{end}}
+        </select>
+
+        <br>
+
+        <label for="date">Select Date:</label>
+        <select name="date" id="date">
+            {{range .MasterSlots}}
+                {{range .Slots}}
+                    <option value="{{.Date}}">{{.Date}}</option>
+                {{end}}
+            {{end}}
+        </select>
+
+        <br>
+
+        <label for="time">Select Time:</label>
+        <select name="time" id="time">
+            {{range .MasterSlots}}
+                {{range .Slots}}
+                    <option value="{{.Time}}">{{.Time}}</option>
+                {{end}}
+            {{end}}
+        </select>
+
+        <br>
+
+        <input type="submit" value="Book Slot">
+    </form>
 </body>
 </html>

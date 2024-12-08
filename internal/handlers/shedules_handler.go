@@ -1,72 +1,90 @@
+// handlers/shedules_handler.go
 package handlers
 
 import (
-	"beauty-salon/internal/db"
 	"fmt"
 	"html/template"
 	"net/http"
-	"strconv"
-
+    "beauty-salon/internal/db"
 	"github.com/gorilla/mux"
+	"strconv"
 )
 
-type SlotData struct {
-	MasterID int
-	Date     string
-	Time     string
-}
-
-type SlotViewData struct {
-	Slots []SlotData
+// Структура данных для передачи в шаблон
+type PageData struct {
+	MasterSlots []struct {
+		Master db.Master
+		Slots  []db.SlotData
+	}
+	ServiceID int
 }
 
 func ViewAvailableSlotsHandler(w http.ResponseWriter, r *http.Request) {
-	// Получаем service_id из URL
+	// Извлекаем параметр service_id из URL
 	vars := mux.Vars(r)
 	serviceID, err := strconv.Atoi(vars["service_id"])
 	if err != nil {
-		http.Error(w, "Invalid service ID", http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Invalid service_id: %v", err), http.StatusBadRequest)
 		return
 	}
 
-	// Получаем category_id для данной услуги
-	categoryID, err := db.GetCategoryIDByService(serviceID)
+	// Получаем всех мастеров из базы данных
+	masters, err := db.GetMasters()
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching category ID: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error fetching masters: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Получаем доступные слоты для категории
-	dbSlots, err := db.GetAvailableSlotsForCategory(categoryID)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching slots: %v", err), http.StatusInternalServerError)
-		return
+	var masterSlots []struct {
+		Master db.Master
+		Slots  []db.SlotData
 	}
 
-	// Подготавливаем данные для шаблона
-	var slots []SlotData
-	for _, dbSlot := range dbSlots {
-		slots = append(slots, SlotData{
-			MasterID: dbSlot.MasterID,
-			Date:     dbSlot.Date,
-			Time:     dbSlot.Time,
+	// Получаем слоты для каждого мастера, фильтруя по service_id
+	for _, master := range masters {
+		slots, err := db.GetAvailableSlotsForMaster(master.ID)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("Error fetching slots for master %d: %v", master.ID, err), http.StatusInternalServerError)
+			return
+		}
+
+		// Применяем фильтрацию по service_id, если оно нужно
+		var filteredSlots []db.SlotData
+		for _, slot := range slots {
+			// Проверяем, если ServiceID не является NULL, то фильтруем по service_id
+			if slot.ServiceID != nil && *slot.ServiceID == serviceID {
+				filteredSlots = append(filteredSlots, slot)
+			} else if slot.ServiceID == nil {
+				// Если ServiceID равно NULL, пропускаем этот слот
+				filteredSlots = append(filteredSlots, slot)
+			}
+		}
+
+		masterSlots = append(masterSlots, struct {
+			Master db.Master
+			Slots  []db.SlotData
+		}{
+			Master: master,
+			Slots:  filteredSlots,
 		})
 	}
 
-	data := SlotViewData{
-		Slots: slots,
+	// Отправляем данные в шаблон
+	data := PageData{
+		MasterSlots: masterSlots,
+		ServiceID:   serviceID,
 	}
 
-	// Загружаем и обрабатываем шаблон
 	tmpl, err := template.ParseFiles("templates/booking.html")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error loading template: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	// Рендерим шаблон
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	err = tmpl.Execute(w, data)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
+		return
 	}
 }
