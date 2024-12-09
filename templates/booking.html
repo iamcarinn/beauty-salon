@@ -102,11 +102,13 @@
 
         // Функция для преобразования времени в формат HH:MM
         function formatTime(timeString) {
-            const time = new Date(timeString);
-            const hours = String(time.getHours()).padStart(2, '0');
-            const minutes = String(time.getMinutes()).padStart(2, '0');
+            // Разделяем строку по двоеточию
+            const timeParts = timeString.split(':');
+            const hours = timeParts[0];
+            const minutes = timeParts[1];
             return `${hours}:${minutes}`;
         }
+
 
         // Событие выбора мастера
         masterSelect.addEventListener('change', function () {
