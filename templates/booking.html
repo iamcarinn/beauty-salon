@@ -45,7 +45,7 @@
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const year = date.getFullYear();
-            return `${day}.${month}.${year}`;
+            return `${day}-${month}-${year}`;
         }
 
         // Событие выбора мастера
@@ -60,7 +60,15 @@
                         timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
                         submitButton.disabled = true;
 
+                        // Используем Set для фильтрации уникальных дат
+                        const uniqueDates = new Set();
+
                         data.dates.forEach(date => {
+                            uniqueDates.add(date); // Добавляем дату в Set, который автоматически удаляет дубликаты
+                        });
+
+                        // Преобразуем уникальные даты и добавляем в выпадающий список
+                        uniqueDates.forEach(date => {
                             const formattedDate = formatDate(date); // Преобразуем дату в нужный формат
                             const option = document.createElement('option');
                             option.value = date; // Используем оригинальную дату для отправки
