@@ -22,3 +22,16 @@ func InitDB() {
 
 	log.Println("Connected to the database!")
 }
+
+// Функции для выполнения запросов
+func QueryRow(query string, args ...interface{}) *sql.Row {
+    return DB.QueryRow(query, args...)
+}
+
+func Exec(query string, args ...interface{}) (sql.Result, error) {
+    return DB.Exec(query, args...)
+}
+
+func Close() {
+    DB.Close()
+}

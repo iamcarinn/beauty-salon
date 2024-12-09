@@ -10,8 +10,8 @@ func SetupRouter() *mux.Router {
 	r.HandleFunc("/", handlers.HomeHandler).Methods("GET")
 	r.HandleFunc("/category", handlers.CategoryHandler).Methods("GET")
 	r.HandleFunc("/booking/{service_id}", handlers.ViewMastersHandler).Methods("GET")
-	// r.HandleFunc("/booking/{service_id}/{master_id}", handlers.ViewAvailableSlotsHandler).Methods("GET")
     r.HandleFunc("/api/masters/{masterID}/dates", handlers.ViewAvailableDatesHandler).Methods("GET")
-	r.HandleFunc("/api/masters/{masterID}/dates/{date}/times", handlers.ViewAvailableTimesHandler).Methods("GET")     
+	r.HandleFunc("/api/masters/{masterID}/dates/{date}/times", handlers.ViewAvailableTimesHandler).Methods("GET")  
+	r.HandleFunc("/booking", handlers.HandleBooking).Methods("POST")
 	return r
 }
