@@ -18,7 +18,6 @@ type Slot struct {
 	Date       string `json:"date"`
 	Time       string `json:"time"`
 	IsAvailable bool  `json:"is_available"`
-	ServiceID  int    `json:"service_id"`
 }
 
 // Структура для услуги
@@ -85,7 +84,7 @@ func GetCategoryForService(serviceID int) (Category, error) {
 // Получение доступных слотов для мастера
 func GetAvailableSlotsForMaster(masterID int) ([]Slot, error) {
 	rows, err := DB.Query(`
-		SELECT id, master_id, date, time, is_available, service_id
+		SELECT id, master_id, date, time, is_available
 		FROM schedules
 		WHERE master_id = $1 AND is_available = true`, masterID)
 	if err != nil {
@@ -96,7 +95,7 @@ func GetAvailableSlotsForMaster(masterID int) ([]Slot, error) {
 	var slots []Slot
 	for rows.Next() {
 		var slot Slot
-		if err := rows.Scan(&slot.ID, &slot.MasterID, &slot.Date, &slot.Time, &slot.IsAvailable, &slot.ServiceID); err != nil {
+		if err := rows.Scan(&slot.ID, &slot.MasterID, &slot.Date, &slot.Time, &slot.IsAvailable); err != nil {
 			return nil, err
 		}
 		slots = append(slots, slot)
