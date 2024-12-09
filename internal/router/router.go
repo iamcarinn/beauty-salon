@@ -12,6 +12,6 @@ func SetupRouter() *mux.Router {
 	r.HandleFunc("/booking/{service_id}", handlers.ViewMastersHandler).Methods("GET")
     r.HandleFunc("/api/masters/{masterID}/dates", handlers.ViewAvailableDatesHandler).Methods("GET")
 	r.HandleFunc("/api/masters/{masterID}/dates/{date}/times", handlers.ViewAvailableTimesHandler).Methods("GET")  
-	r.HandleFunc("/booking", handlers.HandleBooking).Methods("POST")
+	r.HandleFunc("/bookingdone/{service_id}", handlers.HandleBooking).Methods("POST")
 	return r
 }

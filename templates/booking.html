@@ -36,8 +36,10 @@
 </head>
 <body>
     <h1>Available Slots for Booking</h1>
-
-    <form action="/booking" method="POST">
+    <form action="/bookingdone/{{.ServiceID}}" method="POST">
+        <!-- Скрытое поле для передачи service_id -->
+        <input type="hidden" name="service_id" value="{{.ServiceID}}">
+    
         <!-- Строка для выбора мастера, даты и времени -->
         <div class="form-row">
             <label for="master">Select Master:</label>
@@ -48,37 +50,38 @@
                 {{end}}
             </select>
         </div>
-
+    
         <div class="form-row">
             <label for="date">Select Date:</label>
             <select name="date" id="date" disabled>
                 <option value="" disabled selected>Select a Date</option>
             </select>
         </div>
-
+    
         <div class="form-row">
             <label for="time">Select Time:</label>
             <select name="time" id="time" disabled>
                 <option value="" disabled selected>Select a Time</option>
             </select>
         </div>
-
+    
         <!-- Строка для ввода имени и номера телефона -->
         <div class="form-row">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" required placeholder="Enter your name">
         </div>
-
+    
         <div class="form-row">
             <label for="phone">Phone Number:</label>
             <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
         </div>
-
+    
         <!-- Кнопка записи -->
         <div class="form-row">
             <button type="submit" disabled id="submit-button">Book Slot</button>
         </div>
     </form>
+    
 
     <script>
         const masterSelect = document.getElementById('master');

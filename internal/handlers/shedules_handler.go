@@ -16,30 +16,36 @@ type MasterSlots struct {
 	Slots  []db.Slot
 }
 
-// Обработчик для отображения мастеров в выбранной категории
+// Обработчик для отображения мастеров в выбранной категории и услуг
 func ViewMastersHandler(w http.ResponseWriter, r *http.Request) {
+	// Получаем service_id из URL
 	serviceID, err := strconv.Atoi(mux.Vars(r)["service_id"])
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Invalid category ID: %v", err), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Invalid service ID: %v", err), http.StatusBadRequest)
 		return
 	}
 
+	// Получаем мастеров для выбранной услуги
 	masters, err := db.GetMastersForService(serviceID)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching masters for category %d: %v", serviceID, err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error fetching masters for service %d: %v", serviceID, err), http.StatusInternalServerError)
 		return
 	}
 
+	// Загружаем шаблон
 	tmpl, err := template.ParseFiles("templates/booking.html")
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error loading template: %v", err), http.StatusInternalServerError)
 		return
 	}
 
+	// Передаем мастеров и услуги в шаблон
 	err = tmpl.Execute(w, struct {
 		Masters  []db.Master
+		ServiceID int
 	}{
 		Masters:  masters,
+		ServiceID: serviceID,
 	})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)

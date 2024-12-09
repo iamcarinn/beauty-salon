@@ -4,25 +4,26 @@ import (
 	"beauty-salon/internal/db"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
-// package handlers
-
-// import (
-//     "beauty-salon/internal/db"
-// 	"fmt"
-// 	"net/http"
-// 	"time"
-
-// 	_ "github.com/lib/pq" // PostgreSQL driver
-// )
 
 func HandleBooking(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
+        // Получаем service_id из URL
+        vars := mux.Vars(r)
+        serviceID, err := strconv.Atoi(vars["service_id"])
+        if err != nil {
+            fmt.Printf("invalid serviceID = %v", serviceID)
+            http.Error(w, "Invalid service ID", http.StatusBadRequest)
+            return
+        }        
+
 		// Извлекаем данные из формы
 		masterID := r.FormValue("master_id")
-		fmt.Printf("Master_id: %d", masterID)
 		dateStr := r.FormValue("date") // дата в формате "DD.MM.YYYY"
 		timeStr := r.FormValue("time") // время в формате "HH:MM"
 		customerName := r.FormValue("name")
@@ -61,7 +62,7 @@ func HandleBooking(w http.ResponseWriter, r *http.Request) {
 		// 3. Вставляем запись в таблицу bookings
 		_, err = db.Exec(
 			`INSERT INTO bookings (service_id, schedule_id, customer_name, customer_phone)
-            VALUES ($1, $2, $3, $4);`, 1, scheduleID, customerName, customerPhone) // Предполагаем, что service_id равно 1
+            VALUES ($1, $2, $3, $4);`, serviceID, scheduleID, customerName, customerPhone) // Предполагаем, что service_id равно 1
 
 		if err != nil {
 			fmt.Fprintf(w, "Error inserting booking: %v", err)
