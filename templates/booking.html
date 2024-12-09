@@ -4,33 +4,80 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Booking</title>
+    <style>
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-row {
+            margin-bottom: 15px;
+        }
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-row input, .form-row select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        #submit-button {
+            padding: 10px 20px;
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #submit-button:disabled {
+            background-color: #cccccc;
+        }
+    </style>
 </head>
 <body>
     <h1>Available Slots for Booking</h1>
 
     <form action="/booking" method="POST">
-        <!-- Выпадающий список мастеров -->
-        <label for="master">Select Master:</label>
-        <select name="master_id" id="master">
-            <option value="" disabled selected>Select a Master</option>
-            {{range .Masters}}
-                <option value="{{.ID}}">{{.Name}}</option>
-            {{end}}
-        </select>
+        <!-- Строка для выбора мастера, даты и времени -->
+        <div class="form-row">
+            <label for="master">Select Master:</label>
+            <select name="master_id" id="master">
+                <option value="" disabled selected>Select a Master</option>
+                {{range .Masters}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+            </select>
+        </div>
 
-        <!-- Выпадающий список дат -->
-        <label for="date">Select Date:</label>
-        <select name="date" id="date" disabled>
-            <option value="" disabled selected>Select a Date</option>
-        </select>
+        <div class="form-row">
+            <label for="date">Select Date:</label>
+            <select name="date" id="date" disabled>
+                <option value="" disabled selected>Select a Date</option>
+            </select>
+        </div>
 
-        <!-- Выпадающий список времени -->
-        <label for="time">Select Time:</label>
-        <select name="time" id="time" disabled>
-            <option value="" disabled selected>Select a Time</option>
-        </select>
+        <div class="form-row">
+            <label for="time">Select Time:</label>
+            <select name="time" id="time" disabled>
+                <option value="" disabled selected>Select a Time</option>
+            </select>
+        </div>
 
-        <button type="submit" disabled id="submit-button">Book Slot</button>
+        <!-- Строка для ввода имени и номера телефона -->
+        <div class="form-row">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your name">
+        </div>
+
+        <div class="form-row">
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+        </div>
+
+        <!-- Кнопка записи -->
+        <div class="form-row">
+            <button type="submit" disabled id="submit-button">Book Slot</button>
+        </div>
     </form>
 
     <script>
@@ -38,6 +85,8 @@
         const dateSelect = document.getElementById('date');
         const timeSelect = document.getElementById('time');
         const submitButton = document.getElementById('submit-button');
+        const nameInput = document.getElementById('name');
+        const phoneInput = document.getElementById('phone');
 
         // Функция для преобразования даты в формат DD-MM-YYYY
         function formatDate(dateString) {
@@ -124,12 +173,25 @@
 
         // Событие выбора времени
         timeSelect.addEventListener('change', function () {
-            if (this.value) {
+            if (this.value && nameInput.value && phoneInput.value) {
                 submitButton.disabled = false;
             } else {
                 submitButton.disabled = true;
             }
         });
+
+        // Проверка всех полей
+        function checkForm() {
+            if (nameInput.value && phoneInput.value && masterSelect.value && dateSelect.value && timeSelect.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        }
+
+        // Событие на изменение в полях имени и телефона
+        nameInput.addEventListener('input', checkForm);
+        phoneInput.addEventListener('input', checkForm);
     </script>
 </body>
 </html>
