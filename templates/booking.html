@@ -3,43 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Available Slots for Booking</title>
+    <title>Booking</title>
 </head>
 <body>
     <h1>Available Slots for Booking</h1>
-    <form method="POST" action="/book-slot">
+
+    <form action="/booking" method="POST">
+        <!-- Выпадающий список мастеров -->
         <label for="master">Select Master:</label>
-        <select name="master" id="master">
-            {{range .MasterSlots}}
-                <option value="{{.Master.ID}}">{{.Master.Name}}</option>
+        <select name="master_id" id="master">
+            <option value="" disabled selected>Select a Master</option>
+            {{range .Masters}}
+                <option value="{{.ID}}">{{.Name}}</option>
             {{end}}
         </select>
 
-        <br>
-
+        <!-- Выпадающий список дат -->
         <label for="date">Select Date:</label>
-        <select name="date" id="date">
-            {{range .MasterSlots}}
-                {{range .Slots}}
-                    <option value="{{.Date}}">{{.Date}}</option>
-                {{end}}
-            {{end}}
+        <select name="date" id="date" disabled>
+            <option value="" disabled selected>Select a Date</option>
         </select>
 
-        <br>
-
+        <!-- Выпадающий список времени -->
         <label for="time">Select Time:</label>
-        <select name="time" id="time">
-            {{range .MasterSlots}}
-                {{range .Slots}}
-                    <option value="{{.Time}}">{{.Time}}</option>
-                {{end}}
-            {{end}}
+        <select name="time" id="time" disabled>
+            <option value="" disabled selected>Select a Time</option>
         </select>
 
-        <br>
-
-        <input type="submit" value="Book Slot">
+        <button type="submit" disabled id="submit-button">Book Slot</button>
     </form>
+
+    <script>
+        const masterSelect = document.getElementById('master');
+        const dateSelect = document.getElementById('date');
+        const timeSelect = document.getElementById('time');
+        const submitButton = document.getElementById('submit-button');
+
+        // Событие выбора мастера
+        masterSelect.addEventListener('change', function () {
+            const masterID = this.value;
+
+            if (masterID) {
+                fetch(`/api/masters/${masterID}/dates`) // Эндпоинт для получения доступных дат
+                    .then(response => response.json())
+                    .then(data => {
+                        dateSelect.innerHTML = '<option value="" disabled selected>Select a Date</option>';
+                        timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
+                        submitButton.disabled = true;
+
+                        data.dates.forEach(date => {
+                            const option = document.createElement('option');
+                            option.value = date;
+                            option.textContent = date;
+                            dateSelect.appendChild(option);
+                        });
+
+                        dateSelect.disabled = false;
+                        timeSelect.disabled = true;
+                    });
+            } else {
+                dateSelect.disabled = true;
+                timeSelect.disabled = true;
+                submitButton.disabled = true;
+            }
+        });
+
+        // Событие выбора даты
+        dateSelect.addEventListener('change', function () {
+            const masterID = masterSelect.value;
+            const selectedDate = this.value;
+
+            if (masterID && selectedDate) {
+                fetch(`/api/masters/${masterID}/dates/${selectedDate}/times`) // Эндпоинт для получения времени
+                    .then(response => response.json())
+                    .then(data => {
+                        timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
+
+                        data.times.forEach(time => {
+                            const option = document.createElement('option');
+                            option.value = time;
+                            option.textContent = time;
+                            timeSelect.appendChild(option);
+                        });
+
+                        timeSelect.disabled = false;
+                        submitButton.disabled = true;
+                    });
+            } else {
+                timeSelect.disabled = true;
+                submitButton.disabled = true;
+            }
+        });
+
+        // Событие выбора времени
+        timeSelect.addEventListener('change', function () {
+            if (this.value) {
+                submitButton.disabled = false;
+            } else {
+                submitButton.disabled = true;
+            }
+        });
+    </script>
 </body>
 </html>

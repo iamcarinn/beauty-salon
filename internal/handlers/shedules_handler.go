@@ -1,90 +1,78 @@
-// handlers/shedules_handler.go
 package handlers
 
 import (
 	"fmt"
-	"html/template"
+	"beauty-salon/internal/db"
 	"net/http"
-    "beauty-salon/internal/db"
 	"github.com/gorilla/mux"
+	"html/template"
 	"strconv"
+	"encoding/json"
 )
 
-// Структура данных для передачи в шаблон
-type PageData struct {
-	MasterSlots []struct {
-		Master db.Master
-		Slots  []db.SlotData
-	}
-	ServiceID int
+// Структура для отображения мастеров и слотов
+type MasterSlots struct {
+	Master db.Master
+	Slots  []db.Slot
 }
 
-func ViewAvailableSlotsHandler(w http.ResponseWriter, r *http.Request) {
-	// Извлекаем параметр service_id из URL
-	vars := mux.Vars(r)
-	serviceID, err := strconv.Atoi(vars["service_id"])
+// Обработчик для отображения мастеров в выбранной категории
+func ViewMastersHandler(w http.ResponseWriter, r *http.Request) {
+	serviceID, err := strconv.Atoi(mux.Vars(r)["service_id"])
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Invalid service_id: %v", err), http.StatusBadRequest)
+		http.Error(w, fmt.Sprintf("Invalid category ID: %v", err), http.StatusBadRequest)
 		return
 	}
 
-	// Получаем всех мастеров из базы данных
-	masters, err := db.GetMasters()
+	masters, err := db.GetMastersForService(serviceID)
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching masters: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error fetching masters for category %d: %v", serviceID, err), http.StatusInternalServerError)
 		return
-	}
-
-	var masterSlots []struct {
-		Master db.Master
-		Slots  []db.SlotData
-	}
-
-	// Получаем слоты для каждого мастера, фильтруя по service_id
-	for _, master := range masters {
-		slots, err := db.GetAvailableSlotsForMaster(master.ID)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Error fetching slots for master %d: %v", master.ID, err), http.StatusInternalServerError)
-			return
-		}
-
-		// Применяем фильтрацию по service_id, если оно нужно
-		var filteredSlots []db.SlotData
-		for _, slot := range slots {
-			// Проверяем, если ServiceID не является NULL, то фильтруем по service_id
-			if slot.ServiceID != nil && *slot.ServiceID == serviceID {
-				filteredSlots = append(filteredSlots, slot)
-			} else if slot.ServiceID == nil {
-				// Если ServiceID равно NULL, пропускаем этот слот
-				filteredSlots = append(filteredSlots, slot)
-			}
-		}
-
-		masterSlots = append(masterSlots, struct {
-			Master db.Master
-			Slots  []db.SlotData
-		}{
-			Master: master,
-			Slots:  filteredSlots,
-		})
-	}
-
-	// Отправляем данные в шаблон
-	data := PageData{
-		MasterSlots: masterSlots,
-		ServiceID:   serviceID,
 	}
 
 	tmpl, err := template.ParseFiles("templates/booking.html")
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("Error loading template: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	err = tmpl.Execute(w, data)
+	err = tmpl.Execute(w, struct {
+		Masters  []db.Master
+	}{
+		Masters:  masters,
+	})
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error rendering template: %v", err), http.StatusInternalServerError)
+	}
+}
+
+// Handler для получения доступных дат
+func ViewAvailableDatesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	masterID, err := strconv.Atoi(vars["masterID"])
+	if err != nil {
+		http.Error(w, "Invalid master ID", http.StatusBadRequest)
 		return
 	}
+
+	dates, _ := db.GetAvailableDateForMaster(masterID)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"dates": dates})
+}
+
+// Handler для получения доступного времени
+func ViewAvailableTimesHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	masterID, err := strconv.Atoi(vars["masterID"])
+	if err != nil {
+		http.Error(w, "Invalid master ID", http.StatusBadRequest)
+		return
+	}
+
+	date := vars["date"]
+	times, _ := db.GetAvailableTimeForMasterAndDate(masterID, date)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]interface{}{"times": times})
 }
