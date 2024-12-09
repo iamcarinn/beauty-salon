@@ -48,6 +48,14 @@
             return `${day}-${month}-${year}`;
         }
 
+        // Функция для преобразования времени в формат HH:MM
+        function formatTime(timeString) {
+            const time = new Date(timeString);
+            const hours = String(time.getHours()).padStart(2, '0');
+            const minutes = String(time.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
         // Событие выбора мастера
         masterSelect.addEventListener('change', function () {
             const masterID = this.value;
@@ -98,9 +106,10 @@
                         timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
 
                         data.times.forEach(time => {
+                            const formattedTime = formatTime(time); // Преобразуем время в формат HH:MM
                             const option = document.createElement('option');
                             option.value = time;
-                            option.textContent = time;
+                            option.textContent = formattedTime; // Отображаем преобразованное время
                             timeSelect.appendChild(option);
                         });
 
