@@ -1,42 +1,73 @@
 package db
 
 import (
-	"fmt"
+    "fmt"
 )
 
-// Структура для записи клиента
-type Booking struct {
-	ID          int    `json:"id"`
-	ServiceID   int    `json:"service_id"`
-	ScheduleID  int    `json:"schedule_id"`
-	CustomerName string `json:"customer_name"`
-	CustomerPhone string `json:"customer_phone"`
+// Структура для отображения информации о записи
+type BookingInfo struct {
+    Date         string `json:"date"`
+    Time         string `json:"time"`
+    MasterName   string `json:"master_name"`
+    ServiceName  string `json:"service_name"`
+    CustomerName string `json:"customer_name"`
+    CustomerPhone string `json:"customer_phone"`
+    ScheduleID   int    `json:"schedule_id"`
+    BookingID    int    `json:"booking_id"`
 }
 
-// Получение всех записей для клиента по телефону
-func GetBookingsByPhone(phone string) ([]Booking, error) {
-	rows, err := DB.Query(`
-		SELECT id, service_id, schedule_id, customer_name, customer_phone
-		FROM bookings
-		WHERE customer_phone = $1`, phone)
-	if err != nil {
-		return nil, fmt.Errorf("Error fetching bookings for phone %s: %v", phone, err)
-	}
-	defer rows.Close()
+// Функция для получения записей по номеру телефона
+func GetBookingsByPhone(phone string) ([]BookingInfo, error) {
+    query := `
+        SELECT 
+            s.date,
+            s.time,
+            m.name AS master_name,
+            srv.name AS service_name,
+            b.customer_name,
+            b.customer_phone,
+            s.id AS schedule_id,
+            b.id AS booking_id
+        FROM 
+            bookings b
+        JOIN 
+            schedules s ON b.schedule_id = s.id
+        JOIN 
+            masters m ON s.master_id = m.id
+        JOIN 
+            services srv ON b.service_id = srv.id
+        WHERE 
+            b.customer_phone = $1;
+    `
 
-	var bookings []Booking
-	for rows.Next() {
-		var booking Booking
-		err := rows.Scan(&booking.ID, &booking.ServiceID, &booking.ScheduleID, &booking.CustomerName, &booking.CustomerPhone)
-		if err != nil {
-			return nil, fmt.Errorf("Error scanning booking row: %v", err)
-		}
-		bookings = append(bookings, booking)
-	}
+    rows, err := DB.Query(query, phone)
+    if err != nil {
+        return nil, fmt.Errorf("failed to execute query: %v", err)
+    }
+    defer rows.Close()
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("Error iterating over rows: %v", err)
-	}
+    var bookings []BookingInfo
+    for rows.Next() {
+        var booking BookingInfo
+        err := rows.Scan(
+            &booking.Date,
+            &booking.Time,
+            &booking.MasterName,
+            &booking.ServiceName,
+            &booking.CustomerName,
+            &booking.CustomerPhone,
+            &booking.ScheduleID,
+            &booking.BookingID,
+        )
+        if err != nil {
+            return nil, fmt.Errorf("failed to scan row: %v", err)
+        }
+        bookings = append(bookings, booking)
+    }
 
-	return bookings, nil
+    if err := rows.Err(); err != nil {
+        return nil, fmt.Errorf("error during row iteration: %v", err)
+    }
+
+    return bookings, nil
 }

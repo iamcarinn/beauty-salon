@@ -1,13 +1,13 @@
 package handlers
 
 import (
-	"net/http"
-	"html/template"
-	"beauty-salon/internal/db"
+    "beauty-salon/internal/db"
+    "net/http"
+    "html/template"
 )
 
 func ViewMyBookingsHandler(w http.ResponseWriter, r *http.Request) {
-    var bookings []db.Booking
+    var bookings []db.BookingInfo
 
     // Обрабатываем POST запрос
     if r.Method == "POST" {

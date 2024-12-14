@@ -18,9 +18,10 @@
     <table border="1">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Сервис</th>
-                <th>Расписание</th>
+                <th>Дата</th>
+                <th>Время</th>
+                <th>Мастер</th>
+                <th>Услуга</th>
                 <th>Имя клиента</th>
                 <th>Номер клиента</th>
             </tr>
@@ -28,9 +29,10 @@
         <tbody>
             {{range .}}
             <tr>
-                <td>{{.ID}}</td>
-                <td>{{.ServiceID}}</td>
-                <td>{{.ScheduleID}}</td>
+                <td>{{.Date}}</td>
+                <td>{{.Time}}</td>
+                <td>{{.MasterName}}</td>
+                <td>{{.ServiceName}}</td>
                 <td>{{.CustomerName}}</td>
                 <td>{{.CustomerPhone}}</td>
             </tr>
