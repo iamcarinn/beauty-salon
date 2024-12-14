@@ -20,6 +20,7 @@
             <tr>
                 <th>Дата</th>
                 <th>Время</th>
+                <th>Категория</th>
                 <th>Мастер</th>
                 <th>Услуга</th>
                 <th>Имя клиента</th>
@@ -29,8 +30,9 @@
         <tbody>
             {{range .}}
             <tr>
-                <td>{{.Date}}</td>
-                <td>{{.Time}}</td>
+                <td>{{.FormattedDate}}</td>
+                <td>{{.FormattedTime}}</td>
+                <td>{{.CategoryName}}</td>
                 <td>{{.MasterName}}</td>
                 <td>{{.ServiceName}}</td>
                 <td>{{.CustomerName}}</td>
