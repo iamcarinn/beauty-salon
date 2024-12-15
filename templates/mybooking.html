@@ -5,6 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои записи</title>
     <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e6e6fa, #d8b9d6); /* Лавандовый градиент */
+            color: #4b0082; /* Темный фиолетовый для текста */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #6a5acd; /* Лаванда */
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #9370db; /* Средний фиолетовый */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 80%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #6a5acd; /* Лаванда */
+            color: white;
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #8a2be2; /* Фиолетовый */
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            width: auto; /* Ensures the button is not stretched */
+            display: block;
+        }
+
+        button:hover {
+            background-color: #9370db; /* Лаванда с фиолетовым оттенком */
+            transform: scale(1.05);
+        }
+
+        .form-row {
+            margin-top: 20px;
+            text-align: center;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -23,7 +105,8 @@
             padding: 20px;
             border: 1px solid #888;
             width: 80%;
-            max-width: 300px;
+            max-width: 400px; /* Slightly wider modal */
+            text-align: center;
         }
 
         .close {
@@ -40,6 +123,31 @@
             cursor: pointer;
         }
 
+        input[type="text"] {
+            padding: 10px;
+            width: 25%; /* Field is now twice as narrow */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .modal input[type="text"] {
+            width: 60%; /* Widened input field in modal */
+        }
+
+        .booking-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .booking-actions button {
+            margin: 0 10px;
+        }
+
+        label {
+            margin-bottom: 10px; /* Added spacing between label and input */
+        }
     </style>
 </head>
 <body>
@@ -52,7 +160,7 @@
 
     {{if .}}
     <h2>Записи для этого номера:</h2>
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Дата</th>
@@ -76,7 +184,9 @@
                 <td>{{.CustomerName}}</td>
                 <td>
                     <span id="phone-{{.BookingID}}">{{.CustomerPhone}}</span>
-                    <button type="button" onclick="openModal('{{.BookingID}}')">Изменить телефон</button>
+                    <div class="booking-actions">
+                        <button type="button" onclick="openModal('{{.BookingID}}')">Изменить номер</button>
+                    </div>
                 </td>
                 <td>
                     <form action="/cancel" method="POST">
@@ -98,6 +208,7 @@
         <a href="/"><button type="button">Вернуться на главную страницу</button></a>
     </div>
 
+    <!-- Modal -->
     <div id="phoneModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -107,22 +218,20 @@
         </div>
     </div>
 
-
-
     <script>
         let currentBookingID = null;
-    
+
         // Открытие модального окна для изменения телефона
         function openModal(bookingID) {
             currentBookingID = bookingID;
             document.getElementById('phoneModal').style.display = "block";
         }
-    
+
         // Закрытие модального окна
         function closeModal() {
             document.getElementById('phoneModal').style.display = "none";
         }
-    
+
         // Сохранение нового номера телефона
         function savePhone() {
             const newPhone = document.getElementById('newPhone').value;
@@ -154,6 +263,5 @@
             }
         }
     </script>
-    
 </body>
 </html>

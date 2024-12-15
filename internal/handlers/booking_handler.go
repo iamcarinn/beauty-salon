@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"html/template"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -69,7 +70,20 @@ func HandleBooking(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		fmt.Fprintf(w, "Booking successful!")
+		// Рендерим шаблон
+		tmpl, err := template.ParseFiles("templates/booking_successful.html")
+		if err != nil {
+			http.Error(w, "Error loading template", http.StatusInternalServerError)
+			return
+		}
+		
+			// Передаем данные в шаблон (если нужно, можно передать дополнительные данные)
+		err = tmpl.Execute(w, nil)
+		if err != nil {
+			http.Error(w, "Error rendering template", http.StatusInternalServerError)
+			return
+		}
+
 	} else {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 	}

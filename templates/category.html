@@ -3,6 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <title>Услуги</title>
+    <style>
+        /* Подключаем шрифт Comic Sans MS */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e6e6fa, #d8b9d6); /* Лавандовый градиент */
+            color: #4b0082; /* Темный фиолетовый для текста */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #6a5acd; /* Лаванда */
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        ul li {
+            margin: 20px 0;
+            font-size: 1.4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        ul li a {
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #ba55d3; /* Средний фиолетовый */
+            padding: 16px 30px;
+            border-radius: 50px; /* Овальная форма кнопки */
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        ul li a:hover {
+            background-color: #6a5acd; /* Лаванда */
+            transform: scale(1.05);
+        }
+
+        .price {
+            margin-left: 20px; /* Добавлено большее расстояние до цены */
+            font-size: 1.2rem;
+            color: #8a2be2; /* Цвет для цены */
+            font-weight: bold;
+        }
+
+        .form-row {
+            margin-top: 40px;
+        }
+
+        .form-row a {
+            text-decoration: none;
+        }
+
+        .form-row button {
+            background-color: #8a2be2; /* Фиолетовый */
+            padding: 14px 30px;
+            border-radius: 50px; /* Овальная форма кнопки */
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .form-row button:hover {
+            background-color: #9370db; /* Лаванда с фиолетовым оттенком */
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
     <h1>Услуги</h1>

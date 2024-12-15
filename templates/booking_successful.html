@@ -1,0 +1,73 @@
+<!-- templates/booking_successful.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Запись совершена!</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e6e6fa, #d8b9d6); /* Лавандовый градиент */
+            color: #4b0082; /* Темный фиолетовый */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #6a5acd; /* Лаванда */
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #9370db; /* Средний фиолетовый */
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .message-box {
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .message-box a {
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            background-color: #8a2be2; /* Фиолетовый */
+            font-size: 1.2rem;
+            display: inline-block;
+            margin-top: 20px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .message-box a:hover {
+            background-color: #9370db; /* Лаванда с фиолетовым оттенком */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="message-box">
+        <h1>Запись успешно совершена!</h1>
+        <p>Вы записаны в салон "Красота в деталях".<br>Мы с нетерпением ждём вашего визита!</p>
+        <a href="/">Вернуться на главную</a>
+    </div>
+</body>
+</html>

@@ -2,10 +2,115 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Главная страница</title>
+    <title>Главная страница - Красота в деталях</title>
+    <style>
+        /* Подключаем шрифт Comic Sans MS */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #e6e6fa, #d8b9d6); /* Лавандовый градиент */
+            color: #4b0082; /* Темный фиолетовый для текста */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #6a5acd; /* Лаванда */
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: #9370db; /* Средний фиолетовый */
+            margin-bottom: 15px;
+        }
+
+        .salon-name {
+            font-size: 2.4rem;
+            font-weight: bold;
+            color: #8a2be2; /* Цвет фиолетового */
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .form-row {
+            margin-top: 40px;
+        }
+
+        a {
+            text-decoration: none;
+            padding: 16px 30px;
+            margin: 10px;
+            border-radius: 50px; /* Овальная форма кнопки */
+            color: #fff;
+            font-weight: bold;
+            display: inline-block;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #d8b9d6; /* Лаванда с розовым оттенком */
+            transform: scale(1.05);
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        ul li {
+            margin: 20px 0;
+        }
+
+        ul li a {
+            background-color: #ba55d3; /* Средний фиолетовый */
+            border-radius: 50px; /* Овальная форма кнопки */
+            padding: 18px 30px;
+            font-size: 1.2rem;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        ul li a:hover {
+            background-color: #6a5acd; /* Лаванда */
+            transform: scale(1.05);
+        }
+
+        #view-booking {
+            background-color: #8a2be2; /* Фиолетовый */
+            padding: 14px 30px;
+            border-radius: 50px; /* Овальная форма кнопки */
+            color: white;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 30px;
+        }
+
+        #view-booking:hover {
+            background-color: #9370db; /* Лаванда с фиолетовым оттенком */
+            transform: scale(1.05);
+        }
+    </style>
 </head>
 <body>
     <h1>Добро пожаловать в наш салон!</h1>
+
+    <div class="salon-name">Красота в деталях</div>
+
 
     <h2>Записаться</h2>
     <div>Выберите категорию:</div>
