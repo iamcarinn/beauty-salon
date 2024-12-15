@@ -2,10 +2,14 @@ package handlers
 
 import (
 	"beauty-salon/internal/db"
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 func ViewMyBookingsHandler(w http.ResponseWriter, r *http.Request) {
@@ -79,4 +83,56 @@ func CancelBookingHandler(w http.ResponseWriter, r *http.Request) {
 		// Перенаправляем пользователя обратно на страницу с записями
 		http.Redirect(w, r, "/mybooking", http.StatusSeeOther)
 	}
+}
+
+func UpdatePhoneHandler(w http.ResponseWriter, r *http.Request) {
+    // Устанавливаем заголовок Content-Type как JSON
+    w.Header().Set("Content-Type", "application/json")
+
+    // Извлекаем параметр bookingID из URL
+    vars := mux.Vars(r)
+    bookingID := vars["bookingID"]
+
+    // Чтение тела запроса (новый номер телефона)
+    var requestData struct {
+        Phone string `json:"phone"`
+    }
+    err := json.NewDecoder(r.Body).Decode(&requestData)
+    if err != nil {
+        log.Println("Ошибка при чтении тела запроса:", err)
+        http.Error(w, `{"error": "Ошибка при чтении запроса"}`, http.StatusBadRequest)
+        return
+    }
+
+    // Проверка, что номер телефона не пустой
+    if requestData.Phone == "" {
+        http.Error(w, `{"error": "Номер телефона не может быть пустым"}`, http.StatusBadRequest)
+        return
+    }
+
+    // Обновление номера телефона в базе данных
+    err = UpdatePhoneNumber(bookingID, requestData.Phone)
+    if err != nil {
+        log.Println("Ошибка при обновлении номера телефона:", err)
+        http.Error(w, `{"error": "Произошла ошибка при обновлении номера телефона"}`, http.StatusInternalServerError)
+        return
+    }
+
+    // Отправка успешного ответа в формате JSON
+    response := map[string]bool{"success": true}
+    json.NewEncoder(w).Encode(response)
+}
+
+
+// Функция для обновления номера телефона в базе данных
+func UpdatePhoneNumber(bookingID, newPhone string) error {
+    query := `UPDATE bookings SET customer_phone = $1 WHERE id = $2`
+
+    // Выполнение запроса
+    _, err := db.Exec(query, newPhone, bookingID)
+    if err != nil {
+        return fmt.Errorf("ошибка при обновлении номера: %w", err)
+    }
+
+    return nil
 }

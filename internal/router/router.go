@@ -18,7 +18,7 @@ func SetupRouter() *mux.Router {
 	// Маршрут для просмотра записей
 	r.HandleFunc("/mybooking", handlers.ViewMyBookingsHandler).Methods("GET", "POST")
 	r.HandleFunc("/cancel", handlers.CancelBookingHandler).Methods("POST")
-
+	r.HandleFunc("/updatePhone/{bookingID}", handlers.UpdatePhoneHandler).Methods("POST")
 	return r
 }
  

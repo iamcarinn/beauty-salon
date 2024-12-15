@@ -4,6 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мои записи</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+    </style>
 </head>
 <body>
     <h1>Привет!</h1>
@@ -30,14 +67,17 @@
         </thead>
         <tbody>
             {{range .}}
-            <tr>
+            <tr id="booking-{{.BookingID}}">
                 <td>{{.FormattedDate}}</td>
                 <td>{{.FormattedTime}}</td>
                 <td>{{.MasterName}}</td>
                 <td>{{.ServiceName}}</td>
                 <td>{{.CategoryName}}</td>
                 <td>{{.CustomerName}}</td>
-                <td>{{.CustomerPhone}}</td>
+                <td>
+                    <span id="phone-{{.BookingID}}">{{.CustomerPhone}}</span>
+                    <button type="button" onclick="openModal('{{.BookingID}}')">Изменить телефон</button>
+                </td>
                 <td>
                     <form action="/cancel" method="POST">
                         <input type="hidden" name="booking_id" value="{{.BookingID}}">
@@ -52,5 +92,61 @@
     {{else}}
     <p>Записей не найдено.</p>
     {{end}}
+
+    <div id="phoneModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Введите новый номер телефона:</h3>
+            <input type="text" id="newPhone" placeholder="Новый номер телефона">
+            <button type="button" onclick="savePhone()">Сохранить</button>
+        </div>
+    </div>
+
+    <script>
+        let currentBookingID = null;
+    
+        // Открытие модального окна для изменения телефона
+        function openModal(bookingID) {
+            currentBookingID = bookingID;
+            document.getElementById('phoneModal').style.display = "block";
+        }
+    
+        // Закрытие модального окна
+        function closeModal() {
+            document.getElementById('phoneModal').style.display = "none";
+        }
+    
+        // Сохранение нового номера телефона
+        function savePhone() {
+            const newPhone = document.getElementById('newPhone').value;
+            if (newPhone) {
+                // Отправка запроса на сервер для обновления номера телефона
+                fetch(`/updatePhone/${currentBookingID}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phone: newPhone })
+                })
+                .then(response => response.json())  // Преобразуем ответ в JSON
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById(`phone-${currentBookingID}`).innerText = newPhone;
+                        closeModal();
+                    } else {
+                        alert('Ошибка при сохранении нового номера телефона');
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при обновлении номера');
+                });
+
+            } else {
+                alert('Пожалуйста, введите новый номер телефона');
+            }
+        }
+    </script>
+    
 </body>
 </html>
