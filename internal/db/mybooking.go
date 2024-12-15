@@ -95,3 +95,34 @@ func GetBookingsByPhone(phone string) ([]BookingInfo, error) {
 
     return bookings, nil
 }
+
+// Функция для отмены записи
+func CancelBooking(bookingID, scheduleID int) error {
+	// Начинаем транзакцию
+	tx, err := DB.Begin()
+	if err != nil {
+		return fmt.Errorf("не удалось начать транзакцию: %v", err)
+	}
+	defer tx.Rollback()
+
+	// Удаляем запись из таблицы bookings
+	_, err = tx.Exec("DELETE FROM bookings WHERE id = $1", bookingID)
+	if err != nil {
+		return fmt.Errorf("не удалось удалить запись из bookings: %v", err)
+	}
+
+	// Удаляем запись из таблицы schedules
+	_, err = tx.Exec("DELETE FROM schedules WHERE id = $1", scheduleID)
+	if err != nil {
+		return fmt.Errorf("не удалось удалить запись из schedules: %v", err)
+	}
+
+	// Подтверждаем транзакцию
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("не удалось подтвердить транзакцию: %v", err)
+	}
+
+	return nil
+}
+
+

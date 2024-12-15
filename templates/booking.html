@@ -90,30 +90,32 @@
         const submitButton = document.getElementById('submit-button');
         const nameInput = document.getElementById('name');
         const phoneInput = document.getElementById('phone');
-
-        // Функция для преобразования даты в формат DD-MM-YYYY
+    
+        // Функция для преобразования даты в формат DD.MM.YY
         function formatDate(dateString) {
             const date = new Date(dateString);
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}-${month}-${year}`;
+            const year = String(date.getFullYear()).slice(-2); // Берем последние 2 цифры года
+            return `${day}.${month}.${year}`;
         }
-
+    
         // Функция для преобразования времени в формат HH:MM
-        function formatTime(timeString) {
-            // Разделяем строку по двоеточию
-            const timeParts = timeString.split(':');
-            const hours = timeParts[0];
-            const minutes = timeParts[1];
+≠        function formatTime(timeString) {
+            // Создаем объект Date из строки
+            const date = new Date(timeString);
+            // Получаем часы и минуты в UTC
+            const hours = String(date.getUTCHours()).padStart(2, '0'); // добавляем ведущий ноль
+            const minutes = String(date.getUTCMinutes()).padStart(2, '0'); // добавляем ведущий ноль
             return `${hours}:${minutes}`;
         }
 
 
+    
         // Событие выбора мастера
         masterSelect.addEventListener('change', function () {
             const masterID = this.value;
-
+    
             if (masterID) {
                 fetch(`/api/masters/${masterID}/dates`) // Эндпоинт для получения доступных дат
                     .then(response => response.json())
@@ -121,14 +123,14 @@
                         dateSelect.innerHTML = '<option value="" disabled selected>Select a Date</option>';
                         timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
                         submitButton.disabled = true;
-
+    
                         // Используем Set для фильтрации уникальных дат
                         const uniqueDates = new Set();
-
+    
                         data.dates.forEach(date => {
                             uniqueDates.add(date); // Добавляем дату в Set, который автоматически удаляет дубликаты
                         });
-
+    
                         // Преобразуем уникальные даты и добавляем в выпадающий список
                         uniqueDates.forEach(date => {
                             const formattedDate = formatDate(date); // Преобразуем дату в нужный формат
@@ -137,7 +139,7 @@
                             option.textContent = formattedDate; // Отображаем преобразованную дату
                             dateSelect.appendChild(option);
                         });
-
+    
                         dateSelect.disabled = false;
                         timeSelect.disabled = true;
                     });
@@ -147,18 +149,18 @@
                 submitButton.disabled = true;
             }
         });
-
+    
         // Событие выбора даты
         dateSelect.addEventListener('change', function () {
             const masterID = masterSelect.value;
             const selectedDate = this.value;
-
+    
             if (masterID && selectedDate) {
                 fetch(`/api/masters/${masterID}/dates/${selectedDate}/times`) // Эндпоинт для получения времени
                     .then(response => response.json())
                     .then(data => {
                         timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
-
+    
                         data.times.forEach(time => {
                             const formattedTime = formatTime(time); // Преобразуем время в формат HH:MM
                             const option = document.createElement('option');
@@ -166,7 +168,7 @@
                             option.textContent = formattedTime; // Отображаем преобразованное время
                             timeSelect.appendChild(option);
                         });
-
+    
                         timeSelect.disabled = false;
                         submitButton.disabled = true;
                     });
@@ -175,7 +177,7 @@
                 submitButton.disabled = true;
             }
         });
-
+    
         // Событие выбора времени
         timeSelect.addEventListener('change', function () {
             if (this.value && nameInput.value && phoneInput.value) {
@@ -184,7 +186,7 @@
                 submitButton.disabled = true;
             }
         });
-
+    
         // Проверка всех полей
         function checkForm() {
             if (nameInput.value && phoneInput.value && masterSelect.value && dateSelect.value && timeSelect.value) {
@@ -193,11 +195,11 @@
                 submitButton.disabled = true;
             }
         }
-
+    
         // Событие на изменение в полях имени и телефона
         nameInput.addEventListener('input', checkForm);
         phoneInput.addEventListener('input', checkForm);
-        
     </script>
+    
 </body>
 </html>

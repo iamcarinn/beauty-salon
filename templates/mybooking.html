@@ -20,11 +20,12 @@
             <tr>
                 <th>Дата</th>
                 <th>Время</th>
-                <th>Категория</th>
                 <th>Мастер</th>
                 <th>Услуга</th>
+                <th>Категория</th>
                 <th>Имя клиента</th>
                 <th>Номер клиента</th>
+                <th>Действие</th>
             </tr>
         </thead>
         <tbody>
@@ -32,11 +33,18 @@
             <tr>
                 <td>{{.FormattedDate}}</td>
                 <td>{{.FormattedTime}}</td>
-                <td>{{.CategoryName}}</td>
                 <td>{{.MasterName}}</td>
                 <td>{{.ServiceName}}</td>
+                <td>{{.CategoryName}}</td>
                 <td>{{.CustomerName}}</td>
                 <td>{{.CustomerPhone}}</td>
+                <td>
+                    <form action="/cancel" method="POST">
+                        <input type="hidden" name="booking_id" value="{{.BookingID}}">
+                        <input type="hidden" name="schedule_id" value="{{.ScheduleID}}">
+                        <button type="submit">Отменить</button>
+                    </form>
+                </td>
             </tr>
             {{end}}
         </tbody>
