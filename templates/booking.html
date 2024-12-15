@@ -38,21 +38,26 @@
 
         .form-row {
             margin-bottom: 15px;
+            text-align: center; /* Выровнять все содержимое по центру */
         }
-
+        
         .form-row label {
             display: block;
             margin-bottom: 5px;
         }
 
         .form-row input, .form-row select {
-            width: 100%;
-            padding: 10px;
+            width: 80%; /* Устанавливаем ширину 80% */
+            padding: 8px; /* Уменьшаем отступы */
             margin-top: 5px;
+            margin-left: auto; /* Выровнять по центру */
+            margin-right: auto; /* Выровнять по центру */
             border-radius: 10px;
             border: 1px solid #d8b9d6; /* Лавандовый бордер */
-            font-size: 1.1rem;
+            font-size: 1rem; /* Уменьшаем размер шрифта */
+            display: block; /* Блоковый элемент для правильного центрирования */
         }
+
 
         .form-row select {
             background-color: #f5f5f5;
@@ -183,8 +188,6 @@
             return `${hours}:${minutes}`;
         }
 
-
-    
         // Событие выбора мастера
         masterSelect.addEventListener('change', function () {
             const masterID = this.value;
@@ -269,10 +272,9 @@
             }
         }
     
-        // Событие на изменение в полях имени и телефона
+        // Слушатели событий для полей имени и телефона
         nameInput.addEventListener('input', checkForm);
         phoneInput.addEventListener('input', checkForm);
     </script>
-    
 </body>
 </html>
