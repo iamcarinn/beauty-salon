@@ -42,9 +42,9 @@
     
         <!-- Строка для выбора мастера, даты и времени -->
         <div class="form-row">
-            <label for="master">Select Master:</label>
+            <label for="master">Выберите мастера:</label>
             <select name="master_id" id="master">
-                <option value="" disabled selected>Select a Master</option>
+                <option value="" disabled selected>Выберите мастера</option>
                 {{range .Masters}}
                     <option value="{{.ID}}">{{.Name}}</option>
                 {{end}}
@@ -52,33 +52,38 @@
         </div>
     
         <div class="form-row">
-            <label for="date">Select Date:</label>
+            <label for="date">Выберите доступную дату:</label>
             <select name="date" id="date" disabled>
-                <option value="" disabled selected>Select a Date</option>
+                <option value="" disabled selected>Выберите дату</option>
             </select>
         </div>
     
         <div class="form-row">
-            <label for="time">Select Time:</label>
+            <label for="time">Выберите доступное время:</label>
             <select name="time" id="time" disabled>
-                <option value="" disabled selected>Select a Time</option>
+                <option value="" disabled selected>Выберите время</option>
             </select>
         </div>
     
         <!-- Строка для ввода имени и номера телефона -->
         <div class="form-row">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required placeholder="Enter your name">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" name="name" required placeholder="Введите ваше имя">
         </div>
     
         <div class="form-row">
-            <label for="phone">Phone Number:</label>
-            <input type="tel" id="phone" name="phone" required placeholder="Enter your phone number">
+            <label for="phone">Номер телефона:</label>
+            <input type="tel" id="phone" name="phone" required placeholder="Введите ваш номер телефона">
         </div>
     
         <!-- Кнопка записи -->
         <div class="form-row">
-            <button type="submit" disabled id="submit-button">Book Slot</button>
+            <button type="submit" disabled id="submit-button">Записаться</button>
+        </div>
+
+        <!-- Back to Home button -->
+        <div class="form-row">
+            <a href="/"><button type="button">Вернуться на главную страницу</button></a>
         </div>
     </form>
     
@@ -120,8 +125,8 @@
                 fetch(`/api/masters/${masterID}/dates`) // Эндпоинт для получения доступных дат
                     .then(response => response.json())
                     .then(data => {
-                        dateSelect.innerHTML = '<option value="" disabled selected>Select a Date</option>';
-                        timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
+                        dateSelect.innerHTML = '<option value="" disabled selected>Выберите дату</option>';
+                        timeSelect.innerHTML = '<option value="" disabled selected>Выберите время</option>';
                         submitButton.disabled = true;
     
                         // Используем Set для фильтрации уникальных дат
@@ -159,7 +164,7 @@
                 fetch(`/api/masters/${masterID}/dates/${selectedDate}/times`) // Эндпоинт для получения времени
                     .then(response => response.json())
                     .then(data => {
-                        timeSelect.innerHTML = '<option value="" disabled selected>Select a Time</option>';
+                        timeSelect.innerHTML = '<option value="" disabled selected>Выберите время</option>';
     
                         data.times.forEach(time => {
                             const formattedTime = formatTime(time); // Преобразуем время в формат HH:MM

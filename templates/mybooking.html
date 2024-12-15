@@ -93,6 +93,11 @@
     <p>Записей не найдено.</p>
     {{end}}
 
+    <!-- Back to Home button -->
+    <div class="form-row">
+        <a href="/"><button type="button">Вернуться на главную страницу</button></a>
+    </div>
+
     <div id="phoneModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -101,6 +106,8 @@
             <button type="button" onclick="savePhone()">Сохранить</button>
         </div>
     </div>
+
+
 
     <script>
         let currentBookingID = null;
